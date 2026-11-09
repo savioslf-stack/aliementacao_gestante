@@ -1,13 +1,535 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--
+  ============================================================================
+  index.html — a estrutura e os textos da página
+  ============================================================================
+
+  Este é o arquivo principal do site "Guia de alimentação na gestação".
+  É o arquivo que o navegador abre primeiro. Ele usa outros arquivos:
+    recursos/estilo.css         → aparência (cores, letras, layout)
+    recursos/dados/fontes.js   → lista de fontes da Bibliografia (dados fixos)
+    recursos/dados/alimentos.js     → lista de alimentos da tabela (dados fixos)
+    recursos/pagina.js            → comportamento (busca, navegação, tabela)
+
+  COMO A PÁGINA FUNCIONA
+  Todas as seções (trimestres, cuidados, consulta, bibliografia) estão neste
+  arquivo, mas só uma aparece por vez. Quem decide qual aparece é o pagina.js,
+  olhando a parte do endereço depois do "#". Exemplo:
+    index.html#segundo-trimestre  → mostra a <section id="segundo-trimestre">
+
+  PARA EDITAR TEXTOS
+  Os textos dos trimestres e de "Cuidados na gestação" estão escritos aqui
+  mesmo, entre as tags. Mantenha as citações das fontes, como:
+    <span class="citacao"><a href="#fonte-7" ...>[7, p. 22]</a></span>
+  O número depois de "#fonte-" é o número da fonte na Bibliografia.
+
+  O que NÃO está aqui: a tabela de alimentos e a lista da Bibliografia.
+  Elas são montadas pelo pagina.js a partir dos arquivos de dados.
+
+  Dica: comentários como este (entre "<!- -" e "- ->", sem os espaços) não
+  aparecem na tela. Servem só para explicar o código.
+  ============================================================================
+-->
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Alimentaçao para Gestante</title>
+<!-- Configurações da página: acentos (utf-8), ajuste para celular (viewport),
+     título da aba do navegador e descrição usada pelos buscadores (Google). -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guia de alimentação na gestação</title>
+<meta name="description" content="O que comer, o que limitar e o que evitar na gestação, trimestre a trimestre, com base em fontes brasileiras.">
+<!-- Fontes do Google (tipos de letra). "preconnect" adianta a conexão para carregar mais rápido.
+     Se o Google não carregar, a página continua funcionando com fontes do próprio aparelho. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Young+Serif&display=swap" rel="stylesheet">
+<!-- Aparência do site. -->
+<link rel="stylesheet" href="recursos/estilo.css">
 </head>
 <body>
-    <h1> hola mundo como esta voce</h1>
-    <p> quakquer coias so para ver como ficatenho que dar ctrl s</p>
-    <p> Outro paragrafo</p>
+<!-- Link escondido que aparece ao apertar Tab: deixa quem usa só o teclado pular direto para o conteúdo. -->
+<a class="pular-conteudo" href="#conteudo">Pular para o conteúdo</a>
 
+<!-- ========================================================================
+     CABEÇALHO: título do site e faixa de 40 semanas (os três trimestres).
+     Cada pedaço da faixa é um link para o trimestre correspondente.
+     ======================================================================== -->
+
+<header class="cabecalho-site">
+  <div class="cabecalho-interno">
+    <div class="marca">
+      <h1>Guia de alimentação na gestação</h1>
+      <p>O que comer, o que limitar e o que evitar, trimestre a trimestre.</p>
+    </div>
+    <nav class="faixa-semanas" aria-label="Linha do tempo da gestação">
+      <ol>
+        <li><a href="#primeiro-trimestre" data-alvo="primeiro-trimestre"><span class="barra"></span>1º trimestre<br><span class="semanas">Semanas 1–13</span></a></li>
+        <li><a href="#segundo-trimestre"  data-alvo="segundo-trimestre"><span class="barra"></span>2º trimestre<br><span class="semanas">Semanas 14–27</span></a></li>
+        <li><a href="#terceiro-trimestre" data-alvo="terceiro-trimestre"><span class="barra"></span>3º trimestre<br><span class="semanas">Semanas 28–40</span></a></li>
+      </ol>
+    </nav>
+  </div>
+</header>
+
+<!-- ========================================================================
+     AVISO AMARELO: fica sempre visível no topo (ver "10. AVISO" no estilo.css).
+     Primeira linha: não é um site oficial. Segunda linha: responsabilidade.
+     ======================================================================== -->
+<div class="aviso" role="note" aria-label="Aviso">
+  <p><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 9v5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="10" cy="6.2" r="1.1" fill="currentColor"/></svg>
+  <span><strong>Este não é um site oficial.</strong> As informações são gerais, vêm das fontes brasileiras citadas e não substituem a orientação profissional. Converse com a sua equipe de pré-natal sobre a sua gestação.</span></p>
+  <p class="responsabilidade"><span>Os responsáveis por este site não se responsabilizam por decisões tomadas, danos ou quaisquer consequências decorrentes do uso do site ou das informações nele apresentadas.</span></p>
+</div>
+
+<!-- ========================================================================
+     LAYOUT: menu lateral à esquerda + conteúdo à direita.
+     ======================================================================== -->
+<div class="estrutura">
+  <!-- MENU LATERAL ("Temas"). No celular vira o botão "Temas", que abre a lista.
+       Cada link aponta para o id de uma seção (ex.: href="#bibliografia").
+       Para ADICIONAR uma seção nova: crie a <section> lá embaixo e um <li> aqui. -->
+  <nav class="menu-lateral" id="menu-lateral" aria-label="Temas">
+    <button class="botao-menu" type="button" aria-expanded="false" aria-controls="menu">
+      <span id="menu-atual">Temas</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <h2>Temas</h2>
+    <ul class="menu" id="menu">
+      <li><a href="#primeiro-trimestre"><span class="marcador tri1">1</span><span><span class="rotulo">Primeiro trimestre</span><span class="subtitulo">Semanas 1–13</span></span></a></li>
+      <li><a href="#segundo-trimestre"><span class="marcador tri2">2</span><span><span class="rotulo">Segundo trimestre</span><span class="subtitulo">Semanas 14–27</span></span></a></li>
+      <li><a href="#terceiro-trimestre"><span class="marcador tri3">3</span><span><span class="rotulo">Terceiro trimestre</span><span class="subtitulo">Semanas 28–40</span></span></a></li>
+      <li><a href="#cuidados-na-gestacao"><span class="marcador icone"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13.5S2.5 10.2 2.5 6.2A2.9 2.9 0 0 1 8 4.6a2.9 2.9 0 0 1 5.5 1.6c0 4-5.5 7.3-5.5 7.3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></span><span><span class="rotulo">Cuidados na gestação</span><span class="subtitulo">Consultas, vacinas, alertas</span></span></a></li>
+      <li class="separador-grupo"><a href="#consulta-de-alimentos"><span class="marcador icone"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span><span class="rotulo">Consulta de alimentos</span></a></li>
+      <li><a href="#bibliografia"><span class="marcador icone"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 2.5h7.5L13 5v8.5H3z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M5.5 7.5h5M5.5 10h5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span><span class="rotulo">Bibliografia</span></a></li>
+    </ul>
+  </nav>
+
+  <!-- ÁREA DE CONTEÚDO: todas as seções. O pagina.js mostra uma e esconde as outras
+       (por isso as seções, menos a primeira, começam com o atributo "hidden").
+       Cada seção tem:
+         id          → usado no endereço (#id) e nos links do menu
+         data-titulo  → título usado na aba do navegador e nos botões Anterior/Próximo
+       A ORDEM das seções aqui é a ordem dos botões Anterior/Próximo. -->
+  <main class="conteudo" id="conteudo">
+
+    <!-- ============ 1º trimestre ============
+         Blocos (os mesmos nos três trimestres, na mesma ordem):
+           1. cabeçalho com "Semanas 1–13", título e texto de abertura
+           2. "O bebê nesta fase": cartões com o tamanho do bebê comparado a frutas.
+              A barrinha usa style="left:...;width:..." = início e tamanho, em %, nas 40 semanas
+              (cada semana = 2,5%). Ex.: semanas 12–13 → left:27.5%; width:5.0%
+           3. "Alimentação no dia a dia" (completa aqui; resumida no 2º e 3º)
+           4. "Alimentação nesta fase"
+           5. "Alimentação no pré-natal"
+           6. "Um dia de refeições" (ainda a escrever: caixa tracejada)
+           7. link para "Cuidados na gestação" -->
+    <section class="secao" id="primeiro-trimestre" data-titulo="Primeiro trimestre" aria-labelledby="h-primeiro">
+      <header>
+        <div class="info-trimestre"><span class="mini" aria-hidden="true"><i class="ativo"></i><i></i><i></i></span>Semanas 1–13</div>
+        <h2 id="h-primeiro" tabindex="-1">Primeiro trimestre</h2>
+        <p class="abertura">No começo da gestação, você pode sentir enjoo, sono, mais cansaço e mudanças no apetite, nos seios ou no humor. Nesse período o bebê está se formando. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 22">[7, p. 22]</a></span></p>
+      </header>
+
+      <h3>O bebê nesta fase</h3>
+      <ol class="crescimento">
+          <li>
+            <span class="semana">Até 4 semanas</span>
+            <span class="fruta">Grão de arroz</span>
+            <span class="medida">Começam a se formar braços, pernas, órgãos e o rosto.</span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:0.0%;width:10.0%"></span></span>
+          </li>
+          <li>
+            <span class="semana">Fim do 3º mês</span>
+            <span class="fruta">Limão</span>
+            <span class="medida">O bebê já se movimenta e o coração pode ser ouvido no pré-natal.</span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:27.5%;width:5.0%"></span></span>
+          </li>
+        </ol>
+      <p class="linha-citacao"><span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 22">[7, p. 22]</a></span></p>
+
+      <div class="texto-corrido">
+        <h3>Alimentação no dia a dia</h3>
+        <p>Comer bem na gestação não significa comer “perfeito” nem seguir dietas difíceis. O mais importante é fazer escolhas melhores dentro do que é possível na sua realidade. Sempre que puder, prefira alimentos frescos e minimamente processados e evite os ultraprocessados. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 23">[7, p. 23]</a></span></p>
+        <div class="duas-colunas">
+          <div>
+            <h4>Prefira</h4>
+            <ul>
+              <li>Frutas inteiras, em vez de suco.</li>
+              <li>Verduras e legumes frescos, congelados ou da época.</li>
+              <li>Arroz, feijão, milho, mandioca, inhame, batata-doce e outros grãos e tubérculos da sua região.</li>
+              <li>Carnes frescas, frango, peixe, ovos, leite e derivados simples.</li>
+              <li>Comida feita em casa, sempre que possível.</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Evite</h4>
+            <ul>
+              <li>Refrigerantes e bebidas adoçadas.</li>
+              <li>Salgadinhos de pacote, biscoito recheado, bolachas e doces.</li>
+              <li>Macarrão instantâneo, embutidos (salsicha, presunto, peito de peru) e preparações prontas.</li>
+            </ul>
+          </div>
+        </div>
+        <p class="linha-citacao"><span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 23">[7, p. 23]</a></span></p>
+
+        <h4>Pequenas mudanças que já fazem diferença</h4>
+        <ul>
+          <li>Trocar refrigerante e sucos industrializados por água.</li>
+          <li>Manter o arroz com feijão, diariamente se possível.</li>
+          <li>Usar óleos, gorduras, sal e açúcar em pequenas quantidades.</li>
+          <li>Temperar com alho, cebola, cheiro-verde, orégano, açafrão, cominho e gengibre.</li>
+        </ul>
+        <p class="linha-citacao"><span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 24">[7, p. 24]</a></span></p>
+
+        <h4>Água, higiene e segurança dos alimentos</h4>
+        <ul>
+          <li>Beba água potável ou filtrada ao longo do dia.</li>
+          <li>Lave as mãos com água e sabão antes de preparar ou comer.</li>
+          <li>Higienize frutas e verduras com hipoclorito de sódio (água sanitária) diluído conforme o rótulo e enxágue com água potável.</li>
+          <li>Evite alimentos crus ou malcozidos.</li>
+          <li>Observe a validade e a conservação dos alimentos.</li>
+        </ul>
+        <p class="linha-citacao"><span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 24">[7, p. 24]</a></span></p>
+
+        <h3>Alimentação nesta fase</h3>
+        <h4>Para o enjoo</h4>
+        <p>Fazer pequenas refeições ao longo do dia e evitar ficar muitas horas sem comer pode ajudar. Alimentos leves ou frios e líquidos em pequenos goles costumam ser mais bem aceitos. Se o enjoo for intenso ou persistente, procure a equipe de saúde. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 24">[7, p. 24]</a></span></p>
+
+        <h4>Se estiver difícil ter comida em casa</h4>
+        <p>O acesso à alimentação é um direito. Procure o Cras da sua região para saber sobre benefícios e informe a equipe de saúde, que pode ajudar no acesso a programas de apoio. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 24">[7, p. 24]</a></span></p>
+      </div>
+
+      <h3>Alimentação no pré-natal</h3>
+      <dl class="fatos">
+        <dt>Peso</dt>
+        <dd>A equipe calcula o seu IMC com o peso de antes da gravidez para definir a faixa de ganho de peso adequada para você. Essa classificação não é um julgamento. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 43">[7, p. 43]</a></span>
+          <table class="tabela-mini">
+            <caption>Ganho de peso recomendado até 40 semanas</caption>
+            <thead><tr><th scope="col">IMC antes da gravidez</th><th scope="col">Ganho total</th></tr></thead>
+            <tbody>
+              <tr><td>Baixo peso (menos de 18,5)</td><td>9,7 a 12,2 kg</td></tr>
+              <tr><td>Peso adequado (18,5 a 24,9)</td><td>8 a 12 kg</td></tr>
+              <tr><td>Sobrepeso (25 a 29,9)</td><td>7 a 9 kg</td></tr>
+              <tr><td>Obesidade (30 ou mais)</td><td>5 a 7,2 kg</td></tr>
+            </tbody>
+          </table>
+          <span class="linha-citacao"><span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, páginas 88–91">[7, p. 88–91]</a></span> Para gestantes adultas com um bebê; na adolescência e em gestação de gêmeos a orientação é individual. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 44">[7, p. 44]</a></span></span>
+        </dd>
+        <dt>Exames ligados à alimentação</dt>
+        <dd>Hemograma (para ver anemia), glicemia em jejum e sorologia para toxoplasmose, entre outros. A toxoplasmose é um dos motivos para evitar carne crua e lavar bem os alimentos. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 37">[7, p. 37]</a></span></dd>
+        <dt>Vitaminas e ferro</dt>
+        <dd>A equipe orienta o uso de vitaminas, ferro e outros medicamentos quando necessário. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 36">[7, p. 36]</a></span> Veja ácido fólico e ferro na <a href="#consulta-de-alimentos">consulta de alimentos</a>.</dd>
+      </dl>
+
+      <h3>Um dia de refeições</h3>
+      <div class="a-escrever"><strong>A escrever:</strong> exemplos de café da manhã, almoço, jantar e lanches. A Caderneta não traz cardápios; a próxima fonte a pesquisar é o Guia Alimentar.</div>
+      <p class="nota">Consultas, vacinas, sinais de alerta e outros cuidados que não são sobre alimentação estão em <a href="#cuidados-na-gestacao">Cuidados na gestação</a>.</p>
+    </section>
+
+    <!-- ============ 2º trimestre ============ (mesmos blocos do 1º trimestre) -->
+    <section class="secao" id="segundo-trimestre" data-titulo="Segundo trimestre" aria-labelledby="h-segundo" hidden>
+      <header>
+        <div class="info-trimestre"><span class="mini" aria-hidden="true"><i class="ativo"></i><i class="ativo"></i><i></i></span>Semanas 14–27</div>
+        <h2 id="h-segundo" tabindex="-1">Segundo trimestre</h2>
+        <p class="abertura">Você pode começar a sentir os movimentos do bebê, e a barriga, as mamas e os quadris crescem. Muitas pessoas sentem menos desconforto e mais disposição nessa fase, mas cada gestação é única. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 22">[7, p. 22]</a></span></p>
+      </header>
+
+      <h3>O bebê nesta fase</h3>
+      <ol class="crescimento">
+          <li>
+            <span class="semana">A partir de 14 semanas</span>
+            <span class="fruta">Laranja</span>
+            <span class="medida">Já é possível ver movimentos do corpo no ultrassom.</span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:32.5%;width:7.5%"></span></span>
+          </li>
+          <li>
+            <span class="semana">17 a 18 semanas</span>
+            <span class="fruta">Manga</span>
+            <span class="medida">Cerca de 17 a 20 cm e 200 a 250 g.</span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:40.0%;width:5.0%"></span></span>
+          </li>
+          <li>
+            <span class="semana">20 a 24 semanas</span>
+            <span class="fruta">Mamão pequeno</span>
+            <span class="medida">Cerca de 26 cm e 500 g. Os movimentos ficam mais perceptíveis.</span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:47.5%;width:12.5%"></span></span>
+          </li>
+        </ol>
+      <p class="linha-citacao"><span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, páginas 22–23">[7, p. 22–23]</a></span></p>
+
+      <div class="texto-corrido">
+        <h3>Alimentação no dia a dia</h3>
+        <ul class="resumo">
+          <li>Prefira alimentos frescos ou minimamente processados e comida feita em casa. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 23">[7, p. 23]</a></span></li>
+          <li>Evite ultraprocessados, como refrigerantes, salgadinhos de pacote, biscoito recheado e macarrão instantâneo. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 23">[7, p. 23]</a></span></li>
+          <li>Mantenha o arroz com feijão, diariamente se possível. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 24">[7, p. 24]</a></span></li>
+          <li>Troque refrigerante e sucos industrializados por água potável ou filtrada. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 24">[7, p. 24]</a></span></li>
+          <li>Higienize frutas e verduras e evite alimentos crus ou malcozidos. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 24">[7, p. 24]</a></span></li>
+        </ul>
+        <p class="nota">Essas orientações valem para a gestação inteira. A versão completa está em <a href="#primeiro-trimestre">Primeiro trimestre</a>, e cada alimento pode ser consultado na <a href="#consulta-de-alimentos">consulta de alimentos</a>.</p>
+
+        <h3>Alimentação nesta fase</h3>
+        <h4>Diabetes gestacional</h4>
+        <p>É o aumento do açúcar no sangue que pode surgir na gravidez. Geralmente não dá sintomas e é identificada por um exame de sangue entre a 24ª e a 28ª semana. Se necessário, o cuidado pode incluir alimentação orientada pela equipe, atividade física e controle do açúcar no sangue. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 42">[7, p. 42]</a></span></p>
+        <h4>Dentes</h4>
+        <p>Comer ou beber com frequência alimentos ácidos, como frutas cítricas, sucos, vinagre e refrigerantes, pode danificar os dentes, assim como vômitos frequentes e refluxo. O pré-natal odontológico ajuda a prevenir esses problemas. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 45">[7, p. 45]</a></span></p>
+      </div>
+
+      <h3>Alimentação no pré-natal</h3>
+      <dl class="fatos">
+        <dt>Peso</dt>
+        <dd>O peso é avaliado em todas as consultas. Mesmo que o ganho passe da faixa recomendada, não é indicado perder peso na gestação. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 43">[7, p. 43]</a></span> <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 87">[7, p. 87]</a></span></dd>
+        <dt>Exames</dt>
+        <dd>Teste de tolerância à glicose (TOTG 75 g), de preferência entre 24 e 28 semanas. Se a primeira sorologia mostrou que você nunca teve toxoplasmose, o teste é repetido. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 37">[7, p. 37]</a></span></dd>
+        <dt>Ferro</dt>
+        <dd>A suplementação preventiva de ferro vai do momento em que a gravidez é descoberta até 3 meses depois do parto, conforme orientação da equipe. <span class="citacao"><a href="#fonte-2" aria-label="Fonte 2">[2]</a></span></dd>
+      </dl>
+
+      <h3>Um dia de refeições</h3>
+      <div class="a-escrever"><strong>A escrever:</strong> exemplos de café da manhã, almoço, jantar e lanches. A Caderneta não traz cardápios; a próxima fonte a pesquisar é o Guia Alimentar.</div>
+      <p class="nota">Consultas, vacinas, sinais de alerta e outros cuidados que não são sobre alimentação estão em <a href="#cuidados-na-gestacao">Cuidados na gestação</a>.</p>
+    </section>
+
+    <!-- ============ 3º trimestre ============ (mesmos blocos do 1º trimestre) -->
+    <section class="secao" id="terceiro-trimestre" data-titulo="Terceiro trimestre" aria-labelledby="h-terceiro" hidden>
+      <header>
+        <div class="info-trimestre"><span class="mini" aria-hidden="true"><i class="ativo"></i><i class="ativo"></i><i class="ativo"></i></span>Semanas 28–40</div>
+        <h2 id="h-terceiro" tabindex="-1">Terceiro trimestre</h2>
+        <p class="abertura">No final da gestação, o corpo se prepara para o parto. Você pode sentir mais peso, desconforto, vontade frequente de urinar ou dificuldade para dormir. A barriga pode endurecer por alguns momentos, e pode sair colostro do bico do peito. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 22">[7, p. 22]</a></span></p>
+      </header>
+
+      <h3>O bebê nesta fase</h3>
+      <ol class="crescimento">
+          <li>
+            <span class="semana">25 a 32 semanas</span>
+            <span class="fruta">Abacaxi</span>
+            <span class="medida">Cerca de 34 a 43 cm e 1 a 2 kg. O cérebro e os pulmões se desenvolvem.</span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:60.0%;width:20.0%"></span></span>
+          </li>
+          <li>
+            <span class="semana">33 a 36 semanas</span>
+            <span class="fruta">Melão</span>
+            <span class="medida">Cerca de 44 a 48 cm e 2,3 a 2,8 kg. Costuma ficar de cabeça para baixo.</span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:80.0%;width:10.0%"></span></span>
+          </li>
+          <li>
+            <span class="semana">37 a 42 semanas</span>
+            <span class="fruta">Melancia</span>
+            <span class="medida">Cerca de 48 a 52 cm e 3 a 4 kg. Pronto para nascer.</span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:90.0%;width:10.0%"></span></span>
+          </li>
+        </ol>
+      <p class="linha-citacao"><span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 23">[7, p. 23]</a></span></p>
+
+      <div class="texto-corrido">
+        <h3>Alimentação no dia a dia</h3>
+        <ul class="resumo">
+          <li>Prefira alimentos frescos ou minimamente processados e comida feita em casa. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 23">[7, p. 23]</a></span></li>
+          <li>Evite ultraprocessados, como refrigerantes, salgadinhos de pacote, biscoito recheado e macarrão instantâneo. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 23">[7, p. 23]</a></span></li>
+          <li>Mantenha o arroz com feijão, diariamente se possível. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 24">[7, p. 24]</a></span></li>
+          <li>Troque refrigerante e sucos industrializados por água potável ou filtrada. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 24">[7, p. 24]</a></span></li>
+          <li>Higienize frutas e verduras e evite alimentos crus ou malcozidos. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 24">[7, p. 24]</a></span></li>
+        </ul>
+        <p class="nota">Essas orientações valem para a gestação inteira. A versão completa está em <a href="#primeiro-trimestre">Primeiro trimestre</a>, e cada alimento pode ser consultado na <a href="#consulta-de-alimentos">consulta de alimentos</a>.</p>
+
+        <h3>Alimentação nesta fase</h3>
+        <h4>No início do trabalho de parto</h4>
+        <p>Na fase inicial (latente), sempre que possível, você pode ficar em casa, com descanso, alimentação leve e apoio de pessoas de confiança. Náuseas e vômitos podem acontecer. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 58">[7, p. 58]</a></span> No plano de parto, você pode escrever que deseja liberdade para se alimentar e tomar líquidos. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 53">[7, p. 53]</a></span></p>
+        <h4>Preparando a amamentação</h4>
+        <p>O leite humano é recomendado até os dois anos ou mais, idealmente como alimento exclusivo até os seis meses. Cada experiência de amamentação é única, e dificuldades no começo são comuns. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 70">[7, p. 70]</a></span> Na amamentação exclusiva, o bebê não precisa de chás nem de outros líquidos, e algumas plantas usadas em chás podem passar para o leite e afetar o bebê ou a produção de leite. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 32">[7, p. 32]</a></span> Aproveite o pré-natal para tirar suas dúvidas sobre amamentação. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 52">[7, p. 52]</a></span></p>
+        <h4>Depois do parto</h4>
+        <p>Antes do parto, combine com alguém a ajuda com a alimentação nos primeiros dias. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 52">[7, p. 52]</a></span> No pós-parto, prefira alimentos naturais como arroz, feijão, legumes, frutas e carnes, beba bastante água, evite ultraprocessados e respeite seus sinais de fome e saciedade. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 69">[7, p. 69]</a></span></p>
+      </div>
+
+      <h3>Alimentação no pré-natal</h3>
+      <dl class="fatos">
+        <dt>Peso</dt>
+        <dd>O peso continua sendo avaliado em todas as consultas, até o fim da gestação. Mesmo que o ganho passe da faixa recomendada, não é indicado perder peso. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 43">[7, p. 43]</a></span> <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 87">[7, p. 87]</a></span></dd>
+        <dt>Exames</dt>
+        <dd>Hemograma e glicemia em jejum, e toxoplasmose de novo se você ainda não teve a doença. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 37">[7, p. 37]</a></span></dd>
+        <dt>Ferro</dt>
+        <dd>A suplementação preventiva de ferro vai do momento em que a gravidez é descoberta até 3 meses depois do parto, conforme orientação da equipe. Ele continua depois do nascimento. <span class="citacao"><a href="#fonte-2" aria-label="Fonte 2">[2]</a></span></dd>
+      </dl>
+
+      <h3>Um dia de refeições</h3>
+      <div class="a-escrever"><strong>A escrever:</strong> exemplos de café da manhã, almoço, jantar e lanches. A Caderneta não traz cardápios; a próxima fonte a pesquisar é o Guia Alimentar.</div>
+      <p class="nota">Consultas, vacinas, sinais de alerta e outros cuidados que não são sobre alimentação estão em <a href="#cuidados-na-gestacao">Cuidados na gestação</a>.</p>
+    </section>
+
+    <!-- ============ Cuidados na gestação ============
+         Informações importantes que NÃO são sobre alimentação: sinais de alerta,
+         linha do tempo do pré-natal, consultas, vacinas, parto e emoções.
+         O <div class="espaco-alerta"> fica vazio aqui: o pagina.js coloca a caixa
+         "Sinais de alerta" dentro dele (o texto da caixa está no pagina.js). -->
+    <section class="secao" id="cuidados-na-gestacao" data-titulo="Cuidados na gestação" aria-labelledby="h-cuidados" hidden>
+      <header>
+        <h2 id="h-cuidados" tabindex="-1">Cuidados na gestação</h2>
+        <p class="abertura">Informações importantes do pré-natal que não são sobre alimentação: consultas, vacinas, sinais do corpo e quando procurar ajuda.</p>
+      </header>
+
+      <div class="espaco-alerta"></div>
+
+      <h3>Linha do tempo do pré-natal</h3>
+      <ol class="linha-do-tempo">
+          <li>
+            <span class="quando">O quanto antes, até 12 semanas</span>
+            <span class="o-que">Começar o pré-natal. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 33">[7, p. 33]</a></span></span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:0.0%;width:30.0%"></span></span>
+          </li>
+          <li>
+            <span class="quando">7 a 12 semanas</span>
+            <span class="o-que">Ultrassom obstétrico, idealmente nesse período. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 37">[7, p. 37]</a></span></span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:15.0%;width:15.0%"></span></span>
+          </li>
+          <li>
+            <span class="quando">Até 28 semanas</span>
+            <span class="o-que">Consultas mensais. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 34">[7, p. 34]</a></span></span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:0.0%;width:70.0%"></span></span>
+          </li>
+          <li>
+            <span class="quando">A partir de 20 semanas</span>
+            <span class="o-que">Vacina dTpa. Fique atenta aos movimentos do bebê: se ele ficar mais de 4 horas sem se mexer, procure atendimento. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 39">[7, p. 39]</a></span> <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 28">[7, p. 28]</a></span></span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:47.5%;width:52.5%"></span></span>
+          </li>
+          <li>
+            <span class="quando">A partir de 28 semanas</span>
+            <span class="o-que">Vacina VSR. Consultas a cada 15 dias até 36 semanas. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 40">[7, p. 40]</a></span> <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 34">[7, p. 34]</a></span></span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:67.5%;width:22.5%"></span></span>
+          </li>
+          <li>
+            <span class="quando">A partir de 36 semanas</span>
+            <span class="o-que">Consultas semanais até o parto. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 34">[7, p. 34]</a></span></span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:87.5%;width:12.5%"></span></span>
+          </li>
+          <li>
+            <span class="quando">A partir de 37 semanas</span>
+            <span class="o-que">O corpo pode dar sinais de que o parto está chegando. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 50">[7, p. 50]</a></span></span>
+            <span class="trilha" aria-hidden="true"><span class="preenchimento" style="left:90.0%;width:10.0%"></span></span>
+          </li>
+          <li>
+            <span class="quando">Depois do parto</span>
+            <span class="o-que">Pelo menos duas consultas: uma na primeira semana após sair da maternidade e outra por volta de 30 dias. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 34">[7, p. 34]</a></span></span>
+          </li>
+      </ol>
+
+      <div class="texto-corrido">
+        <h3>Consultas</h3>
+        <p>O Ministério da Saúde recomenda no mínimo sete consultas de pré-natal, intercaladas entre médica(o) e enfermeira(o), e pelo menos uma consulta odontológica. Não existe alta do pré-natal: o acompanhamento segue até o parto e o pós-parto. Quando necessário, você também pode ser atendida por psicóloga(o), assistente social, nutricionista e outros profissionais. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 34">[7, p. 34]</a></span></p>
+      </div>
+
+      <h3>Vacinas</h3>
+      <div class="moldura-tabela estreita">
+        <table class="tabela-mini simples">
+          <thead><tr><th scope="col">Vacina</th><th scope="col">Quando tomar</th></tr></thead>
+          <tbody>
+            <tr><td>Hepatite B</td><td>Se o esquema estiver incompleto, iniciar ou completar as 3 doses na gestação.</td></tr>
+            <tr><td>dTpa (difteria, tétano e coqueluche)</td><td>A partir da 20ª semana, em toda gestação, mesmo que já tenha tomado antes.</td></tr>
+            <tr><td>Covid-19</td><td>Uma dose por gestação.</td></tr>
+            <tr><td>Influenza (gripe)</td><td>Uma dose por temporada, em qualquer fase da gestação.</td></tr>
+            <tr><td>VSR (vírus sincicial respiratório)</td><td>A partir da 28ª semana, dose única em cada gestação. Protege o bebê contra bronquiolite e pneumonia nos primeiros meses.</td></tr>
+            <tr><td>Febre amarela e raiva</td><td>Só em situações específicas, com avaliação da equipe.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="linha-citacao">Se alguma vacina não puder ser aplicada na gestação, ela é oferecida após o parto. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, páginas 39–40">[7, p. 39–40]</a></span></p>
+
+      <div class="texto-corrido">
+        <h3>Quando o parto se aproxima</h3>
+        <p>Geralmente a partir de 37 semanas, podem aparecer contrações de treinamento: irregulares, curtas (cerca de 20 segundos) e com intervalos longos. Às vezes sai o tampão mucoso, uma secreção espessa que pode ter traços de sangue. Isso ainda não é o trabalho de parto ativo. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 50">[7, p. 50]</a></span></p>
+        <p>Quando as contrações ficam fortes e regulares, a cada 2 a 3 minutos, é hora de ir para a maternidade ou o Centro de Parto Normal de referência. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 58">[7, p. 58]</a></span> Saiba com antecedência qual é a sua maternidade de referência e como chegar até ela. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 52">[7, p. 52]</a></span></p>
+        <p>O plano de parto é um documento em que você anota como deseja ser cuidada no parto. Ele não é um contrato e pode ser revisto a qualquer momento. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 49">[7, p. 49]</a></span> <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 51">[7, p. 51]</a></span></p>
+
+        <h3>Emoções e saúde mental</h3>
+        <p>Na gestação é comum sentir emoções misturadas, como desejar a maternidade e sentir medo ao mesmo tempo. A equipe de saúde pode ajudar, inclusive em grupos de gestantes. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 47">[7, p. 47]</a></span></p>
+        <p>Converse com a equipe se você sentir tristeza intensa ou que não melhora, ansiedade forte ou medo constante, desespero, isolamento, sofrimento por violência ou pensamentos de se machucar. Se você já usava medicação para saúde mental, não interrompa por conta própria. <span class="citacao"><a href="#fonte-7" aria-label="Fonte 7, página 48">[7, p. 48]</a></span></p>
+      </div>
+    </section>
+
+    <!-- ============ Consulta de alimentos ============
+         - Barra de busca (fica fixa no topo ao rolar).
+         - Tabela "Como ler a tabela": legenda das situações; a coluna "Itens"
+           (data-contagem) é preenchida pelo pagina.js com a contagem de cada situação.
+         - Tabela de alimentos: o <tbody id="linhas-alimentos"> fica VAZIO aqui; o pagina.js
+           cria as linhas a partir de recursos/dados/alimentos.js.
+         Os alimentos não ficam aqui: estão em recursos/dados/alimentos.js. -->
+    <section class="secao" id="consulta-de-alimentos" data-titulo="Consulta de alimentos" aria-labelledby="h-consulta" hidden>
+      <header>
+        <h2 id="h-consulta" tabindex="-1">Consulta de alimentos</h2>
+        <p class="abertura">Busque um alimento para ver se ele é seguro, em que período da gestação a orientação vale e o que observar.</p>
+      </header>
+
+      <div class="ferramentas-busca">
+        <div class="busca" role="search">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M13 13l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <label for="busca-alimentos" class="oculto-visualmente">Buscar alimentos</label>
+          <input id="busca-alimentos" type="search" placeholder="Busque um alimento, ex.: queijo, café, ovo" autocomplete="off" spellcheck="false">
+          <button class="limpar" type="button" aria-label="Limpar busca" hidden>&times;</button>
+        </div>
+        <p class="contagem-resultados" id="contagem-resultados" aria-live="polite"></p>
+      </div>
+
+      <table class="tabela-legenda">
+        <caption>Como ler a tabela</caption>
+        <thead>
+          <tr><th scope="col">Situação</th><th scope="col">O que significa</th><th scope="col">O que fazer</th><th scope="col" class="numero">Itens</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="etiqueta seguro">Seguro</span></td><td>Uma fonte brasileira recomenda ou permite o consumo na gestação.</td><td>Pode consumir, seguindo as observações.</td><td class="numero" data-contagem="seguro"></td></tr>
+          <tr><td><span class="etiqueta limitar">Limitar</span></td><td>A fonte orienta consumir pouco, com moderação ou só com o preparo adequado.</td><td>Consuma com cuidado e leia as observações.</td><td class="numero" data-contagem="limitar"></td></tr>
+          <tr><td><span class="etiqueta evitar">Evitar</span></td><td>A fonte orienta não consumir na gestação ou no período indicado.</td><td>Não consuma no período indicado.</td><td class="numero" data-contagem="evitar"></td></tr>
+          <tr><td><span class="etiqueta sem-fonte">Sem fonte confiável</span></td><td>Não encontramos fonte brasileira confiável sobre o item.</td><td>Converse com a equipe de pré-natal antes de consumir.</td><td class="numero" data-contagem="sem-fonte"></td></tr>
+        </tbody>
+        <tfoot>
+          <tr><td colspan="3" id="rotulo-total-legenda">Total</td><td class="numero" data-contagem="total"></td></tr>
+        </tfoot>
+      </table>
+      <p class="nota-legenda">A coluna <strong>Quando</strong> mostra em que semanas da gestação a orientação vale. Os números entre colchetes, como [7, p. 24], indicam a fonte na <a href="#bibliografia">Bibliografia</a>.</p>
+
+      <div class="moldura-tabela">
+        <table class="alimentos">
+          <thead>
+            <tr>
+              <th scope="col">Alimento</th>
+              <th scope="col" class="col-situacao">Situação</th>
+              <th scope="col" class="col-quando">Quando (semanas)</th>
+              <th scope="col">Observações</th>
+            </tr>
+          </thead>
+          <tbody id="linhas-alimentos"></tbody>
+        </table>
+        <div class="vazio" id="sem-resultados" hidden>
+          <p>Nenhum alimento corresponde a “<span id="termo-buscado"></span>”.<br>Tente uma palavra mais curta ou outra grafia.</p>
+          <button type="button" id="limpar-busca-vazia">Limpar busca</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Bibliografia ============
+         A lista <ol id="referencias"> fica VAZIA aqui; o pagina.js monta os itens a partir de
+         recursos/dados/fontes.js. Cada item ganha id="fonte-N", para os links [N] funcionarem. -->
+    <section class="secao" id="bibliografia" data-titulo="Bibliografia" aria-labelledby="h-bibliografia" hidden>
+      <header>
+        <h2 id="h-bibliografia" tabindex="-1">Bibliografia</h2>
+        <p class="abertura">Fontes brasileiras usadas neste site. Os números entre colchetes na consulta de alimentos apontam para esta lista.</p>
+      </header>
+      <ol class="referencias" id="referencias"></ol>
+    </section>
+
+    <!-- Botões "Anterior" e "Próximo": ficam vazios aqui e são criados pelo pagina.js
+         para a seção que está aberta. -->
+    <nav class="paginacao" id="paginacao" aria-label="Tema anterior e próximo"></nav>
+  </main>
+</div>
+
+
+<!-- ========================================================================
+     SCRIPTS (JavaScript). A ORDEM IMPORTA:
+       1. sources.js e foods.js criam as listas de dados (FONTES e ALIMENTOS);
+       2. pagina.js usa essas listas para montar a página.
+     Ficam no final do <body> para rodar depois que todo o HTML acima já existe.
+     ======================================================================== -->
+<script src="recursos/dados/fontes.js"></script>
+<script src="recursos/dados/alimentos.js"></script>
+<script src="recursos/pagina.js"></script>
 </body>
 </html>
