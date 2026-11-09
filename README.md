@@ -46,6 +46,11 @@ documentacao/                 documentação técnica (abaixo)
 | [Manutenção](documentacao/manutencao.md) | Como fazer correções pontuais no conteúdo e nos dados sem quebrar a página |
 | [Glossário](documentacao/glossario.md) | Termos técnicos e nomes usados no código |
 
+
+## Acessar site 
+
+https://savioslf-stack.github.io/aliementacao_gestante/
+
 ## Executar localmente
 
 Abra o `index.html` no navegador. Para reproduzir o ambiente do GitHub Pages (servidor HTTP), rode na pasta do projeto:
