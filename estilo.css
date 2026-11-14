@@ -1,0 +1,263 @@
+/* ==========================================================================
+   estilo.css — a aparência da página (cores, letras, espaços)
+   ==========================================================================
+
+   COMO O CSS FUNCIONA (resumo para quem está começando)
+   Cada bloco tem um "seletor" e, entre chaves, as "propriedades":
+       .nota { background: green; }
+   Quer dizer: "todo elemento com class="nota" fica com fundo verde".
+     .nome   → elementos com class="nome"
+     #nome   → o elemento com id="nome"
+     a       → todos os links <a>
+     .a b    → elementos <b> que estão DENTRO de um .a
+     a:hover → o link quando o mouse está em cima
+   Quando duas regras valem para o mesmo elemento, a mais específica ou a que
+   vem DEPOIS no arquivo vence.
+
+   UNIDADES
+     px  = pixels (tamanho fixo)
+     rem = múltiplo do tamanho de letra padrão da página (1rem ≈ 16px)
+     em  = múltiplo do tamanho de letra do próprio elemento
+     fr  = uma "fração" do espaço que sobra (usado nas colunas do grid)
+   Explicação completa: documentacao/css.md
+
+   ORGANIZAÇÃO DESTE ARQUIVO
+     1. Cores e letras   2. Regras gerais   3. Cabeçalho   4. Aviso amarelo
+     5. Sumário e seções   6. Trimestres e Cuidados   7. Consulta de alimentos
+     8. Bibliografia   9. Celular   10. Impressão
+   ========================================================================== */
+
+
+/* --------------------------------------------------------------------------
+   1. CORES E LETRAS
+   Variáveis CSS começam com "--" e são usadas com var(--nome).
+   Mudar uma cor AQUI muda essa cor no site inteiro.
+   As cores são códigos hexadecimais (#RRGGBB: vermelho, verde e azul).
+   -------------------------------------------------------------------------- */
+:root {
+  --papel:       #F3F6F1;  /* fundo da página: branco esverdeado */
+  --branco:      #FFFFFF;  /* fundo de caixas e tabelas */
+  --tinta:       #1D2B28;  /* texto principal: verde quase preto */
+  --tinta-suave: #4E5F5A;  /* texto secundário (legendas, explicações) */
+  --linha:       #D6E1DA;  /* linhas e bordas */
+  --verde:       #2F6B5F;  /* links */
+  --verde-claro: #E3EEE8;  /* fundo das notas */
+
+  /* Cores das etiquetas da tabela de alimentos (texto e fundo).
+     A cor sempre vem junto com a palavra (Seguro, Limitar, Evitar),
+     para quem não enxerga bem as cores. */
+  --seguro:  #276E45;  --seguro-fundo:  #E2F1E7;
+  --limitar: #8A5F00;  --limitar-fundo: #FBF0D2;
+  --evitar:  #A62D42;  --evitar-fundo:  #F8E3E6;
+
+  /* Tipos de letra. Se o primeiro não carregar, o navegador usa o próximo da lista. */
+  --letra-titulo: "Young Serif", Georgia, serif;
+  --letra-texto:  "Atkinson Hyperlegible", system-ui, sans-serif;
+}
+
+
+/* --------------------------------------------------------------------------
+   2. REGRAS GERAIS (valem para a página toda)
+   -------------------------------------------------------------------------- */
+/* Rolagem suave ao clicar em um link do sumário.
+   "scroll-padding-top" deixa um espaço no topo ao pular para uma seção,
+   para o título não ficar escondido atrás do aviso amarelo. */
+html { scroll-behavior: smooth; scroll-padding-top: 8rem; }
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--letra-texto);
+  font-size: 1.0625rem;   /* cerca de 17px */
+  line-height: 1.6;       /* espaço entre as linhas */
+}
+
+h1, h2, h3 { font-family: var(--letra-titulo); font-weight: 400; line-height: 1.2; }
+h4 { font-size: 1.02rem; margin: 1.4rem 0 .4rem; }
+a { color: var(--verde); }
+
+/* Área central da página: largura máxima e centralizada (margin: auto). */
+main { max-width: 960px; margin: 0 auto; padding: 0 1rem 4rem; }
+
+
+/* --------------------------------------------------------------------------
+   3. CABEÇALHO (título do site)
+   -------------------------------------------------------------------------- */
+.cabecalho {
+  background: var(--branco);
+  border-bottom: 1px solid var(--linha);
+  padding: 1.25rem 1rem;
+  text-align: center;
+}
+.cabecalho h1 { margin: 0; font-size: 2rem; }
+.cabecalho p  { margin: .25rem 0 0; color: var(--tinta-suave); }
+
+
+/* --------------------------------------------------------------------------
+   4. AVISO AMARELO ("Este não é um site oficial…")
+   "position: sticky; top: 0" prende o aviso no topo da tela ao rolar.
+   "z-index: 10" deixa o aviso por cima do resto da página.
+   -------------------------------------------------------------------------- */
+.aviso {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--limitar-fundo);
+  border-bottom: 1px solid #EBD9A6;
+  padding: .5rem 1rem;
+  font-size: .9rem; line-height: 1.4;
+}
+.aviso p { max-width: 960px; margin: 0 auto; }
+.aviso .responsabilidade { margin-top: .2rem; font-size: .84rem; color: var(--tinta-suave); }
+
+
+/* --------------------------------------------------------------------------
+   5. SUMÁRIO E SEÇÕES
+   -------------------------------------------------------------------------- */
+.sumario {
+  background: var(--branco); border: 1px solid var(--linha); border-radius: 14px;
+  padding: .5rem 1.5rem 1rem; margin-top: 2rem;
+}
+.sumario h2 { font-size: 1.4rem; margin: .75rem 0 .5rem; }
+.sumario li { margin: .3rem 0; }
+
+/* Cada seção começa com uma linha separadora e um bom espaço acima. */
+section { border-top: 1px solid var(--linha); margin-top: 3rem; padding-top: 1rem; }
+section h2 { font-size: 2.3rem; margin: .25rem 0 .5rem; }
+section h3 { font-size: 1.35rem; margin: 2rem 0 .6rem; }
+
+/* Linha pequena "Semanas 1–13" acima do título dos trimestres. */
+.semanas { color: var(--tinta-suave); font-size: .9rem; margin-bottom: 0; }
+
+/* Texto de abertura de cada seção, um pouco maior. */
+.abertura { font-size: 1.15rem; color: var(--tinta-suave); }
+
+/* Caixa verde-clara com uma nota ou dica. */
+.nota { background: var(--verde-claro); border-radius: 6px; padding: .75rem 1rem; }
+
+/* Linha com as fontes de um bloco, como [7, p. 24]. */
+.linha-citacao { font-size: .9rem; color: var(--tinta-suave); }
+
+/* Links das fontes, como [7, p. 24]: letra menor e sem sublinhado.
+   "white-space: nowrap" impede que o link seja quebrado no meio. */
+.citacao { font-size: .8rem; text-decoration: none; white-space: nowrap; }
+.citacao:hover { text-decoration: underline; }
+
+/* Link "↑ Voltar ao início" no fim de cada seção. */
+.voltar { text-align: right; font-size: .9rem; margin-top: 2rem; }
+
+
+/* --------------------------------------------------------------------------
+   6. TRIMESTRES E "CUIDADOS NA GESTAÇÃO"
+   -------------------------------------------------------------------------- */
+/* "O bebê nesta fase": cartões lado a lado.
+   "display: grid" organiza os cartões em colunas; "auto-fit" cria quantas
+   colunas couberem, cada uma com no mínimo 200px. Em tela estreita, os
+   cartões ficam um embaixo do outro. */
+.cartoes {
+  list-style: none; padding: 0;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .75rem;
+}
+.cartoes li {
+  background: var(--branco); border: 1px solid var(--linha); border-radius: 14px;
+  padding: .9rem 1rem; font-size: .92rem; color: var(--tinta-suave);
+}
+.cartoes .semana { display: block; font-size: .85rem; }
+.cartoes .fruta  { display: block; font-family: var(--letra-titulo); font-size: 1.35rem; color: var(--tinta); }
+
+/* Duas colunas lado a lado: "Prefira" e "Evite". */
+.duas-colunas { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 0 2rem; }
+
+/* "Alimentação no pré-natal": o termo (<dt>) em negrito e a explicação (<dd>) embaixo. */
+.fatos dt { font-weight: 700; margin-top: 1rem; }
+.fatos dd { margin: 0; }
+
+/* Tabelas pequenas: ganho de peso, linha do tempo do pré-natal e vacinas.
+   "border-collapse: collapse" junta as bordas das células em uma linha só. */
+.tabela { border-collapse: collapse; background: var(--branco); margin: .75rem 0; font-size: .95rem; }
+.tabela caption { text-align: left; font-size: .85rem; color: var(--tinta-suave); padding-bottom: .3rem; }
+.tabela th, .tabela td { text-align: left; vertical-align: top; padding: .5rem .8rem; border: 1px solid var(--linha); }
+.tabela th { color: var(--tinta-suave); font-size: .85rem; }
+
+/* Caixa "Sinais de alerta": fundo rosado e borda vermelha à esquerda.
+   "columns" divide a lista em 2 colunas quando há espaço. */
+.alerta {
+  background: var(--evitar-fundo); border-left: 4px solid var(--evitar); border-radius: 6px;
+  padding: .5rem 1.25rem; margin: 1.5rem 0;
+}
+.alerta h3 { margin-top: .75rem; }
+.alerta ul { columns: 2 260px; }
+
+
+/* --------------------------------------------------------------------------
+   7. CONSULTA DE ALIMENTOS
+   -------------------------------------------------------------------------- */
+/* Teclas do teclado, como Ctrl e F, desenhadas como "botõezinhos". */
+kbd { border: 1px solid var(--tinta-suave); border-radius: 4px; padding: 0 .3rem; font-family: inherit; font-size: .9em; background: var(--branco); }
+
+/* Lista "Como ler a tabela". */
+.legenda { list-style: none; padding: 0; }
+.legenda li { margin: .6rem 0; }
+
+/* Tabela de alimentos. */
+.alimentos { width: 100%; border-collapse: collapse; background: var(--branco); font-size: .97rem; }
+.alimentos th, .alimentos td { text-align: left; vertical-align: top; padding: .75rem 1rem; border-bottom: 1px solid var(--linha); }
+.alimentos th { color: var(--tinta-suave); font-size: .85rem; background: #F8FAF8; }
+.alimentos small { color: var(--tinta-suave); font-size: .85rem; }
+
+/* Etiquetas coloridas da coluna "Situação" (também usadas na lista "Como ler a tabela").
+   "border-radius: 999px" deixa as pontas totalmente arredondadas (formato de pílula).
+   "white-space: nowrap" impede que a etiqueta quebre em duas linhas. */
+.etiqueta {
+  display: inline-block; padding: .1rem .6rem; border-radius: 999px;
+  font-size: .85rem; font-weight: 700; white-space: nowrap;
+}
+.seguro    { color: var(--seguro);  background: var(--seguro-fundo); }
+.limitar   { color: var(--limitar); background: var(--limitar-fundo); }
+.evitar    { color: var(--evitar);  background: var(--evitar-fundo); }
+.sem-fonte { color: var(--tinta);   background: #ECEEF0; }
+
+
+/* --------------------------------------------------------------------------
+   8. BIBLIOGRAFIA
+   ":target" = o item cujo id está no endereço da página. Exemplo: ao clicar em
+   [7], o endereço termina em #fonte-7 e a fonte 7 fica com fundo verde-claro.
+   -------------------------------------------------------------------------- */
+.referencias { list-style: none; padding: 0; }
+.referencias li { padding: .75rem .5rem; border-top: 1px solid var(--linha); color: var(--tinta-suave); font-size: .95rem; }
+.referencias strong { color: var(--tinta); }
+.referencias li:target { background: var(--verde-claro); }
+
+/* Etiqueta "a conferir" (fonte localizada, mas o conteúdo ainda não foi lido). */
+.pendente { font-size: .78rem; border: 1px dashed var(--tinta-suave); border-radius: 999px; padding: 0 .5rem; }
+
+
+/* --------------------------------------------------------------------------
+   9. CELULAR
+   "@media (max-width: 680px)" = as regras de dentro só valem em telas com
+   até 680px de largura.
+   -------------------------------------------------------------------------- */
+@media (max-width: 680px) {
+  /* O aviso fica mais alto no celular (o texto quebra em mais linhas),
+     por isso o espaço ao pular para uma seção também é maior. */
+  html { scroll-padding-top: 15rem; }
+  .cabecalho h1 { font-size: 1.6rem; }
+  section h2 { font-size: 1.9rem; }
+
+  /* A tabela de alimentos deixa de ser tabela: cada linha vira um bloco,
+     com nome, etiqueta e observações um embaixo do outro. */
+  .alimentos, .alimentos tbody, .alimentos tr, .alimentos td { display: block; }
+  .alimentos tr:first-child { display: none; }   /* esconde a linha de títulos */
+  .alimentos td { border: 0; padding: .2rem 1rem; }
+  .alimentos tr { border-bottom: 1px solid var(--linha); padding: .6rem 0; }
+}
+
+
+/* --------------------------------------------------------------------------
+   10. IMPRESSÃO
+   Ao imprimir, o aviso não fica preso no topo (aparece uma vez só)
+   e o sumário e os links "Voltar ao início" são escondidos.
+   -------------------------------------------------------------------------- */
+@media print {
+  .aviso { position: static; }
+  .sumario, .voltar { display: none; }
+}
